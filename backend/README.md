@@ -77,6 +77,17 @@ Health check endpoint:
 GET /health
 ```
 
+Keep-alive (optional):
+
+Some free hosting providers put apps to sleep after inactivity. To keep it warm, ping `GET /health` periodically from an external uptime/cron service. This backend also supports an optional built-in ping when:
+
+- `KEEP_ALIVE_ENABLED=true`
+- `KEEP_ALIVE_URL` is set (example: `https://your-backend.com/health`)
+
+Default interval is `KEEP_ALIVE_INTERVAL_MINUTES=4`.
+
+Note: if your host scales to zero (stops the process), you still need an external pinger because in-app timers won't run while the service is asleep.
+
 API base path:
 
 ```text
@@ -98,6 +109,9 @@ Defined in `.env`:
 - `WHATSAPP_ACCESS_TOKEN`
 - `WHATSAPP_PHONE_NUMBER_ID`
 - `WHATSAPP_API_VERSION`
+- `KEEP_ALIVE_ENABLED`
+- `KEEP_ALIVE_URL`
+- `KEEP_ALIVE_INTERVAL_MINUTES`
 
 ## Bootstrap Behavior
 

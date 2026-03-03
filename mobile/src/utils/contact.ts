@@ -1,4 +1,5 @@
 import * as Linking from "expo-linking";
+import { Platform } from "react-native";
 
 function sanitizePhone(phone: string): string {
   return phone.replace(/[^\d+]/g, "").trim();
@@ -30,13 +31,26 @@ export async function openDialer(phone: string): Promise<void> {
     throw new Error("رقم الهاتف غير صالح");
   }
 
-  const dialUrl = `tel:${sanitized}`;
-  const canOpen = await Linking.canOpenURL(dialUrl);
-  if (!canOpen) {
-    throw new Error("تعذر فتح تطبيق الاتصال");
+  const targets = Platform.OS === "ios" ? [`telprompt:${sanitized}`, `tel:${sanitized}`] : [`tel:${sanitized}`];
+
+  for (const url of targets) {
+    // Some Android 11+ devices return false from canOpenURL for tel: due to package visibility;
+    // try both canOpenURL and a direct open before giving up.
+    const supported = await Linking.canOpenURL(url).catch(() => false);
+    if (supported) {
+      await Linking.openURL(url);
+      return;
+    }
+
+    try {
+      await Linking.openURL(url);
+      return;
+    } catch {
+      // continue to the next candidate
+    }
   }
 
-  await Linking.openURL(dialUrl);
+  throw new Error("تعذر فتح تطبيق الاتصال");
 }
 
 export async function openWhatsAppChat(phone: string, text: string): Promise<void> {

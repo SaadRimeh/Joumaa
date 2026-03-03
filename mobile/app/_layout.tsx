@@ -1,8 +1,8 @@
+import { AdminNotificationsProvider } from "@/src/context/AdminNotificationsContext";
+import { AuthProvider } from "@/src/context/AuthContext";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { AuthProvider } from "@/src/context/AuthContext";
-import { AdminNotificationsProvider } from "@/src/context/AdminNotificationsContext";
 
 export default function RootLayout() {
   return (

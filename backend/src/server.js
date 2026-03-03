@@ -4,6 +4,7 @@ const connectDB = require("./config/db");
 const { PORT } = require("./config/env");
 const { initSocket } = require("./config/socket");
 const { ensureAdminAccount } = require("./services/bootstrapService");
+const { startKeepAlive } = require("./services/keepAliveService");
 
 async function start() {
   await connectDB();
@@ -14,6 +15,7 @@ async function start() {
 
   server.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
+    startKeepAlive();
   });
 }
 
